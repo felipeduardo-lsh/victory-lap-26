@@ -1,0 +1,1307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070800">
+  <meta name="description" content="VICTORY LAP ’26. Clear the Hive in this Latitude.sh arcade deployment.">
+  <title>LATITUDE.SH // VICTORY LAP ’26</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600;700&family=Roboto+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+:root {
+  color-scheme: dark;
+  --lime: #E0FE56;
+  --earth-1: #272F02;
+  --earth-2: #516200;
+  --earth-accent: #A6C65A;
+  --dark: #070800;
+  --black: #030305;
+  --red: #E40046;
+  --blue: #1AA0FF;
+  --orange: #FF4901;
+  --purple: #8261FB;
+  --white: #FFFFFF;
+  --muted: #858A80;
+  --body-copy: #CDCECC;
+  --dark-80: #121400;
+  --hairline: #23251D;
+  --outline-dark: #393933;
+  --line: rgba(224, 254, 86, .24);
+  --line-soft: rgba(224, 254, 86, .14);
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --display: "Roboto Condensed", Impact, sans-serif;
+  --sans: "Space Grotesk", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; min-height: 100%; margin: 0; }
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--sans);
+}
+button, input { font: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+button:focus-visible, input:focus-visible, canvas:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Topbar & Arena */
+.topbar {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  padding: clamp(12px, 1.3vw, 20px) clamp(16px, 2.5vw, 40px) 12px;
+}
+.brand-lockup, .topbar-right { display: flex; align-items: center; gap: 11px; }
+.brand-lockup { min-width: 0; }
+.topbar-logo {
+  display: block;
+  width: clamp(92px, 7.5vw, 124px);
+  height: auto;
+  object-fit: contain;
+}
+.topbar-right { margin-left: auto; }
+.accessibility-controls { display: flex; align-items: center; justify-content: flex-end; gap: 7px; flex-wrap: wrap; }
+.audio-toggle {
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid var(--line-soft);
+  color: var(--lime);
+  background: transparent;
+  font: 700 10px/1 var(--mono);
+  letter-spacing: .09em;
+  white-space: nowrap;
+}
+.audio-toggle:hover { border-color: var(--lime); color: var(--white); }
+.audio-toggle[aria-pressed="false"] { color: #A6AA9A; border-color: #424637; }
+
+.game-wrap {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0 clamp(10px, 1.5vw, 24px) clamp(10px, 1.5vw, 24px);
+}
+.hud {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(14px, 1.5vw, 28px);
+  min-height: 74px;
+  padding: 12px clamp(16px, 1.4vw, 26px);
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  background: #080900;
+}
+.hud-group { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.hud-group.right { justify-content: flex-end; }
+.hud-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #929789;
+  font: 600 clamp(9px, .36vw, 12px)/1.2 var(--mono);
+  letter-spacing: .13em;
+  white-space: nowrap;
+}
+.hud-key { color: var(--lime); font: 700 clamp(17px, .65vw, 24px)/1 var(--display); letter-spacing: .07em; }
+.hud-key.emp-key { color: var(--blue); }
+.bar-track {
+  width: clamp(100px, 12vw, 220px);
+  height: 12px;
+  padding: 2px;
+  border: 1px solid #454A39;
+  background: #11130C;
+}
+.bar-fill { width: 100%; height: 100%; background: var(--lime); transition: width .12s linear; }
+.bar-fill.emp { width: 0%; background: var(--blue); }
+.hud-value { min-width: 38px; color: var(--white); font: 700 clamp(11px, .35vw, 14px)/1 var(--mono); text-align: right; }
+.timer-wrap { min-width: 140px; text-align: center; }
+.timer { color: var(--white); font: 600 clamp(30px, 1.9vw, 42px)/.95 var(--display); letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+.timer.urgent { color: var(--red); }
+
+.arena {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background-color: #080A04;
+  background-image:
+    linear-gradient(rgba(224,254,86,.052) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224,254,86,.052) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+#gameCanvas {
+  position: relative;
+  z-index: 1;
+  display: block;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  touch-action: none;
+  cursor: crosshair;
+}
+.arena-footer {
+  position: absolute;
+  z-index: 2;
+  right: 16px;
+  bottom: 13px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+  color: #A4A99A;
+  font: 500 clamp(10px, .34vw, 13px)/1.4 var(--mono);
+  letter-spacing: .055em;
+  text-shadow: 0 1px 2px #000;
+}
+.arena-footer strong { color: var(--lime); font-weight: 700; }
+.threat-count { color: var(--white); white-space: nowrap; }
+
+.touch-controls {
+  display: none;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-top: 0;
+  background: #070800;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(2, 44px);
+  gap: 4px;
+}
+.touch-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid #515744;
+  border-radius: 0;
+  color: var(--lime);
+  background: #11140A;
+  font: 700 11px/1 var(--mono);
+  touch-action: none;
+}
+.touch-btn:active, .touch-btn.is-down { color: var(--dark); background: var(--lime); }
+.dpad .up { grid-column: 2; grid-row: 1; }
+.dpad .left { grid-column: 1; grid-row: 2; }
+.dpad .down { grid-column: 2; grid-row: 2; }
+.dpad .right { grid-column: 3; grid-row: 2; }
+.touch-actions { display: flex; align-items: center; gap: 8px; }
+.touch-actions .fire { min-width: 78px; min-height: 62px; color: var(--dark); background: var(--lime); border-color: var(--lime); }
+.touch-actions .emp { min-width: 66px; min-height: 56px; color: #91D2FF; border-color: rgba(26,160,255,.55); background: #07111A; }
+
+/* Modals & Shared Buttons */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  overflow-y: auto;
+  background: rgba(3,3,5,.96);
+  overscroll-behavior: contain;
+}
+.panel {
+  width: min(760px, 100%);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  padding: clamp(24px, 3.5vw, 44px);
+  border: 1px solid var(--outline-dark);
+  background: #070800;
+}
+.eyebrow { color: var(--lime); font: 700 10px/1.5 var(--mono); letter-spacing: .15em; text-transform: uppercase; }
+h1, h2, h3, p { margin-top: 0; }
+.primary-btn, .secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 18px;
+  border: 1px solid var(--lime);
+  border-radius: 0;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font: 700 11px/1.2 var(--mono);
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.primary-btn { color: var(--dark); background: var(--lime); }
+.primary-btn:hover { color: var(--dark); background: #F0FFAA; border-color: #F0FFAA; }
+.secondary-btn { color: #C9CBBF; background: transparent; border-color: #4A4E3F; }
+.secondary-btn:hover { color: var(--white); border-color: #A5AA96; }
+
+/* Intro Splash */
+.intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: #070800;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .42s ease, visibility .42s ease;
+}
+.intro-splash.is-leaving { opacity: 0; visibility: hidden; pointer-events: none; }
+.intro-splash-logo {
+  display: block;
+  width: clamp(180px, 18vw, 340px);
+  height: auto;
+  opacity: 0;
+  transform: translateY(10px) scale(.94);
+  animation: introLogoReveal 1.05s cubic-bezier(.2,.75,.25,1) .12s forwards;
+}
+@keyframes introLogoReveal {
+  0% { opacity: 0; transform: translateY(10px) scale(.94); filter: blur(5px); }
+  65% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* Story Intro Modal */
+.story-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100dvh;
+  padding: 0;
+  overflow: hidden;
+  background: #070800;
+}
+.story-shell {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(18px, 3.2vh, 34px) clamp(18px, 5.5vw, 80px) clamp(18px, 3vh, 30px);
+  overflow: hidden;
+}
+.story-shell::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: .10;
+  background-image: radial-gradient(rgba(224,254,86,.5) .8px, transparent .9px);
+  background-size: 38px 38px;
+  mask-image: radial-gradient(ellipse at center, transparent 18%, #000 100%);
+}
+.story-shell::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  width: min(92vw, 980px);
+  aspect-ratio: 1047 / 1024;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: url("assets/story-bg.svg") center / contain no-repeat;
+  opacity: .16;
+  animation: story-spiral-drift 84s linear infinite;
+}
+@keyframes story-spiral-drift {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.story-header, .story-card { position: relative; z-index: 1; }
+.story-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex: 0 0 auto;
+  width: min(100%, 1280px);
+  min-height: 56px;
+  margin: 0 auto clamp(16px, 2.5vh, 28px);
+}
+.story-logo { display: block; width: clamp(112px, 9.2vw, 140px); height: auto; }
+.story-header-actions { display: flex; align-items: center; gap: 12px; }
+.story-top-button {
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid rgba(255,255,255,.85);
+  border-radius: 0;
+  background: transparent;
+  color: #fff;
+  font: 500 13px/1 var(--sans);
+  white-space: nowrap;
+}
+.story-top-button:hover, .story-top-button:focus-visible { border-color: var(--lime); color: var(--lime); }
+.story-top-button.is-light { background: #fff; color: #111; border-color: #fff; }
+.story-top-button.is-light:hover { background: var(--lime); border-color: var(--lime); color: #070800; }
+
+.story-card {
+  display: flex;
+  flex-direction: column;
+  width: min(780px, calc(100vw - 36px));
+  height: min(780px, calc(100dvh - 150px));
+  min-height: 500px;
+  margin: auto;
+  padding: clamp(24px, 3vw, 42px) clamp(22px, 3vw, 42px) 22px;
+  border: 1px solid rgba(224,254,86,.23);
+  border-radius: 7px;
+  background: #101300;
+  box-shadow: 0 18px 70px rgba(0,0,0,.22);
+  overflow: hidden;
+}
+.story-slide { display: none; flex: 1 1 auto; min-height: 0; flex-direction: column; }
+.story-slide.is-active { display: flex; }
+.story-slide[aria-hidden="true"] { display: none !important; }
+.story-hero { position: relative; flex: 0 0 clamp(230px, 30vh, 300px); min-height: 0; width: 100%; }
+.story-hero img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(92%, 620px);
+  height: 100%;
+  object-fit: contain;
+  object-position: center right;
+  user-select: none;
+  pointer-events: none;
+}
+.story-hero h1 {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  bottom: 0;
+  max-width: 58%;
+  margin: 0;
+  color: var(--lime);
+  font: 900 clamp(36px, 3vw, 42px)/.93 var(--display);
+  letter-spacing: -.015em;
+  text-transform: uppercase;
+}
+.story-copy {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 18px;
+  padding: 0 0 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(224,254,86,.42) transparent;
+  scrollbar-gutter: stable;
+  color: #F0F1E9;
+  font: 400 clamp(1rem, .9vw, 1.25rem)/1.48 var(--sans);
+}
+.story-copy::-webkit-scrollbar { width: 8px; }
+.story-copy::-webkit-scrollbar-track { background: transparent; }
+.story-copy::-webkit-scrollbar-thumb { background: rgba(224,254,86,.48); }
+.story-copy p { margin: 0 0 12px; }
+.story-copy strong { color: #fff; font-weight: 700; }
+.story-copy code { color: var(--lime); font: 500 .95em var(--mono); }
+
+.story-slide.is-entering .story-hero img { animation: story-image-enter .56s cubic-bezier(.2,.72,.25,1) both; }
+.story-slide.is-entering .story-hero h1 { animation: story-title-enter .42s cubic-bezier(.2,.72,.25,1) .06s both; }
+.story-slide.is-entering .story-copy p { animation: story-copy-enter .42s ease-out both; }
+.story-slide.is-entering .story-copy p:nth-child(1) { animation-delay: .10s; }
+.story-slide.is-entering .story-copy p:nth-child(2) { animation-delay: .17s; }
+.story-slide.is-entering .story-copy p:nth-child(3) { animation-delay: .24s; }
+@keyframes story-image-enter {
+  from { opacity: 0; transform: translate3d(0, 10px, 0) scale(.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes story-title-enter {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes story-copy-enter {
+  from { opacity: 0; transform: translate3d(0, 7px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.story-navigation {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 48px;
+  padding-top: 12px;
+}
+.story-dots { display: flex; align-items: center; gap: 12px; }
+.story-dot {
+  position: relative;
+  appearance: none;
+  display: inline-flex;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.story-dot::after {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #A8AAA0;
+  transition: background .16s ease, transform .16s ease;
+}
+.story-dot.is-active::after { background: var(--lime); transform: scale(1.08); }
+.story-dot:hover::after { background: #858A80; }
+.story-dot:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
+.story-nav-actions { display: flex; align-items: center; justify-content: flex-end; }
+.story-next {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--lime);
+}
+.story-next img { display: block; width: 26px; height: 24px; object-fit: contain; }
+.story-next:hover { transform: translateX(3px); }
+.story-continue { min-height: 44px; padding: 11px 16px; font-size: 10px; }
+
+/* Tutorial Briefing Modal */
+.clean-brief {
+  width: min(560px, 100%);
+  padding: clamp(24px, 4vw, 42px);
+}
+.tutorial-title {
+  margin: 10px 0 26px;
+  font: 700 clamp(36px, 5vw, 56px)/.98 var(--display);
+  text-transform: uppercase;
+}
+.instruction-list {
+  display: grid;
+  gap: 9px;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+}
+.instruction-list li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  min-height: 56px;
+  padding: 12px 14px;
+  border: 1px solid #303426;
+  color: #C7C9BE;
+  font: 500 12px/1.55 var(--mono);
+}
+.instruction-list li span {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--white);
+  font: 700 12px/1.4 var(--mono);
+  letter-spacing: .06em;
+}
+.instruction-list li small {
+  color: var(--muted);
+  font: 400 11px/1.4 var(--mono);
+  letter-spacing: 0;
+}
+kbd {
+  min-width: 78px;
+  padding: 7px 9px;
+  border: 1px solid #5D6448;
+  color: var(--lime);
+  text-align: center;
+  font: 700 11px/1 var(--mono);
+}
+.clean-objective {
+  display: grid;
+  gap: 8px;
+  padding: 16px 0 20px;
+  margin-bottom: 20px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.clean-objective span { color: var(--lime); font: 700 10px/1.2 var(--mono); letter-spacing: .14em; }
+.clean-objective strong { color: var(--white); font: 700 14px/1.45 var(--mono); letter-spacing: .025em; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* Game Over Modal */
+.gameover-panel { width: min(560px, 100%); text-align: center; }
+.gameover-panel h2 { margin: 14px 0; color: var(--red); font: 700 clamp(42px, 6vw, 64px)/.95 var(--display); }
+.gameover-panel p { color: #B9BCB0; font: 400 12px/1.7 var(--mono); }
+.gameover-stats { margin: 18px 0; color: var(--lime); font: 700 12px var(--mono); }
+
+/* Victory Final Modal (2-Row Editorial Composition) */
+.victory-modal {
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  background: rgba(3,3,5,.94);
+}
+.victory-panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(240px, .9fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "heading hero"
+    "body body";
+  align-items: center;
+  column-gap: clamp(24px, 3vw, 44px);
+  row-gap: 22px;
+  width: min(980px, calc(100vw - 40px));
+  max-width: 980px;
+  height: auto;
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  padding: clamp(28px, 3.5vw, 44px) clamp(28px, 4vw, 52px);
+  overflow-y: auto;
+  border: 1px solid rgba(224,254,86,.28);
+  border-radius: 5px;
+  background: #101300;
+  box-shadow: 0 22px 80px rgba(0,0,0,.42);
+}
+.victory-heading {
+  grid-area: heading;
+  min-width: 0;
+}
+.victory-hero {
+  grid-area: hero;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 240px;
+  pointer-events: none;
+}
+.victory-hero > img {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: 50% 55%;
+  filter: drop-shadow(0 16px 22px rgba(0,0,0,.22));
+  animation: victory-rocket-hover 5.5s ease-in-out infinite;
+}
+@keyframes victory-rocket-hover {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg); }
+  50% { transform: translate3d(0, -9px, 0) rotate(1deg); }
+}
+.victory-body {
+  grid-area: body;
+  min-width: 0;
+}
+.victory-heading::before {
+  content: "WARM UP YOURSELF!";
+  display: block;
+  margin: 0 0 14px;
+  color: #fff;
+  font: 700 12px/1.4 var(--mono);
+  letter-spacing: .2em;
+}
+.victory-title-lockup {
+  display: block;
+  width: min(100%, 440px);
+  max-width: 440px;
+  margin: 0 0 22px;
+  font-size: 0;
+  line-height: 0;
+}
+.victory-title-lockup > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.victory-arrival {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "label label" "time date";
+  justify-content: start;
+  align-items: baseline;
+  column-gap: 18px;
+  row-gap: 6px;
+  margin: 0;
+}
+.victory-arrival .event-kicker {
+  grid-area: label;
+  margin: 0;
+  color: #fff;
+  font: 700 11px/1.4 var(--mono);
+  letter-spacing: .17em;
+}
+.victory-arrival strong {
+  grid-area: time;
+  color: #E0FE56;
+  font: 900 clamp(46px, 4.8vw, 62px)/.9 var(--display);
+  letter-spacing: -.04em;
+  white-space: nowrap;
+}
+.victory-arrival strong small { font-size: .38em; vertical-align: .12em; }
+.victory-arrival time {
+  grid-area: date;
+  align-self: baseline;
+  padding: 0 0 5px;
+  color: #A6AA91;
+  font: 600 11px/1.4 var(--mono);
+  letter-spacing: .13em;
+  white-space: nowrap;
+}
+.victory-meta {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 32px;
+  margin: 0 0 20px;
+  padding: 18px 0;
+  border-top: 1px solid rgba(224,254,86,.25);
+  border-bottom: 1px solid rgba(224,254,86,.25);
+}
+.victory-meta > div { min-width: 0; }
+.event-kicker {
+  display: block;
+  margin: 0 0 6px;
+  color: #E0FE56;
+  font: 700 10px/1.4 var(--mono);
+  letter-spacing: .12em;
+}
+.victory-location > strong,
+.victory-dresscode > strong {
+  display: block;
+  margin: 0 0 6px;
+  color: #F4F5F0;
+  font: 700 13px/1.35 var(--mono);
+}
+.victory-location address,
+.victory-dresscode p {
+  margin: 0;
+  color: #D1D2C8;
+  font: 400 13px/1.5 var(--sans);
+  font-style: normal;
+}
+.venue-map-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #E0FE56;
+  font: 700 10px/1.4 var(--mono);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.victory-story {
+  color: #E7E8DF;
+  font: 400 15px/1.6 var(--sans);
+}
+.victory-story p { margin: 0 0 12px; }
+.victory-story p:last-child { margin-bottom: 0; }
+.victory-story strong { color: #fff; font-weight: 700; }
+.victory-actions {
+  display: flex;
+  margin-top: 22px;
+}
+.victory-actions .primary-btn {
+  min-width: 220px;
+  min-height: 48px;
+  padding: 12px 24px;
+  background: #E0FE56;
+  color: #070800;
+  font: 800 10px/1 var(--mono);
+  letter-spacing: .12em;
+}
+.victory-actions .primary-btn:hover {
+  background: #516200;
+  border-color: #516200;
+  color: #fff;
+}
+
+/* Light Mode */
+body.light-mode {
+  color-scheme: light;
+  --lime: #516200;
+  --white: #171910;
+  --muted: #55594D;
+  --line: rgba(81,98,0,.30);
+  --line-soft: rgba(81,98,0,.18);
+  --earth-accent: #516200;
+  background: #F7F8F8;
+  color: #171910;
+}
+body.light-mode .audio-toggle { color: #272F02; border-color: #8C927C; background: #FFFFFF; }
+body.light-mode .audio-toggle:hover { color: #FFFFFF; background: #516200; border-color: #516200; }
+body.light-mode .audio-toggle[aria-pressed="true"] { color: #fff; background: #516200; border-color: #516200; }
+body.light-mode .hud { background: #FFFFFF; border-color: #AEB3A2; }
+body.light-mode .hud-label { color: #4F504A; }
+body.light-mode .hud-key { color: #354500; }
+body.light-mode .hud-key.emp-key { color: #087BC5; }
+body.light-mode .hud-value, body.light-mode .timer { color: #171910; }
+body.light-mode .bar-track { background: #EAF1E9; border-color: #7C8272; }
+body.light-mode .bar-fill { background: #516200; }
+body.light-mode .arena {
+  background-color: #FFFFFF;
+  background-image:
+    linear-gradient(rgba(7,8,0,.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7,8,0,.12) 1px, transparent 1px);
+  border-color: #55594D;
+}
+body.light-mode .arena-footer { color: #34382D; text-shadow: none; }
+body.light-mode .arena-footer strong { color: #272F02; }
+body.light-mode .touch-controls { background: #FFFFFF; border-color: #AEB3A2; }
+body.light-mode .touch-btn { color: #272F02; background: #F7F8F8; border-color: #737966; }
+body.light-mode .touch-btn:active, body.light-mode .touch-btn.is-down,
+body.light-mode .touch-actions .fire { color: #fff; background: #516200; border-color: #516200; }
+body.light-mode .touch-actions .emp { color: #087BC5; background: #EAF5FC; border-color: #168BD5; }
+body.light-mode .panel { color: #171910; background: #FFFFFF; border-color: #7E8A54; }
+body.light-mode .modal { background: rgba(247,248,248,.96); }
+body.light-mode .eyebrow { color: #354500; }
+body.light-mode .instruction-list li { color: #4F504A; border-color: #E0E0E0; }
+body.light-mode .instruction-list li span,
+body.light-mode .clean-objective strong { color: #070800; }
+body.light-mode .instruction-list li small { color: #4F504A; }
+body.light-mode kbd { color: #435400; border-color: #929B75; }
+body.light-mode .clean-objective { border-color: #C7CCBE; }
+body.light-mode .clean-objective span { color: #272F02; }
+body.light-mode .primary-btn { color: #fff; }
+body.light-mode .primary-btn:hover { color: #fff; background: #354500; border-color: #354500; }
+body.light-mode button:focus-visible, body.light-mode canvas:focus-visible { outline-color: #516200; }
+
+/* Light Mode Story */
+body.light-mode .story-modal { background: #F5F5EF; }
+body.light-mode .story-shell::before { opacity: .07; background-image: radial-gradient(rgba(81,98,0,.32) .8px, transparent .9px); }
+body.light-mode .story-shell::after { opacity: .12; }
+body.light-mode .story-card { background: rgba(255,255,255,.94); border-color: rgba(81,98,0,.32); box-shadow: 0 18px 70px rgba(30,40,0,.09); }
+body.light-mode .story-hero h1, body.light-mode .story-copy code, body.light-mode .story-next { color: var(--earth-2); }
+body.light-mode .story-copy { color: #202316; scrollbar-color: var(--earth-2) transparent; }
+body.light-mode .story-copy::-webkit-scrollbar-thumb { background: var(--earth-2); }
+body.light-mode .story-copy strong { color: #11150A; }
+body.light-mode .story-dot::after { background: #767A69; }
+body.light-mode .story-dot.is-active::after { background: var(--earth-2); }
+body.light-mode .story-top-button, body.light-mode .story-top-button.is-light { color: var(--earth-2); border-color: var(--earth-2); background: transparent; }
+body.light-mode .story-top-button:hover { color: #fff; background: var(--earth-2); border-color: var(--earth-2); }
+
+/* Light Mode Victory */
+body.light-mode .victory-modal { background: rgba(15,18,6,.72); }
+body.light-mode .victory-panel { background: #fff; border-color: #AEBB8B; box-shadow: 0 22px 80px rgba(15,25,0,.24); }
+body.light-mode .victory-heading::before,
+body.light-mode .victory-arrival .event-kicker { color: #171910; }
+body.light-mode .victory-arrival strong,
+body.light-mode .event-kicker,
+body.light-mode .venue-map-link { color: #516200; }
+body.light-mode .victory-arrival time { color: #596044; }
+body.light-mode .victory-meta { border-color: rgba(81,98,0,.30); }
+body.light-mode .victory-location > strong,
+body.light-mode .victory-dresscode > strong { color: #171910; }
+body.light-mode .victory-location address,
+body.light-mode .victory-dresscode p,
+body.light-mode .victory-story { color: #34382B; }
+body.light-mode .victory-story strong { color: #11150A; }
+body.light-mode .victory-actions .primary-btn { background: #516200; border-color: #516200; color: #fff; }
+body.light-mode .victory-actions .primary-btn:hover { background: #354500; border-color: #354500; }
+
+/* Responsive Breakpoints */
+@media (hover: none) and (pointer: coarse) {
+  .touch-controls { display: flex; }
+}
+
+@media (max-width: 960px) {
+  .story-hero {
+    display: grid;
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    align-items: end;
+    gap: 10px;
+    flex-basis: clamp(180px, 25vh, 240px);
+  }
+  .story-hero img {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+  }
+  .story-hero h1 {
+    position: relative;
+    grid-column: 1;
+    grid-row: 1;
+    max-width: none;
+    font-size: clamp(30px, 4.5vw, 42px);
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    width: calc(100% - 28px);
+    min-height: 44px;
+    margin: 0 auto;
+    padding: max(9px, env(safe-area-inset-top)) 0 8px;
+  }
+  .topbar-logo { width: 82px; }
+  .audio-toggle { min-height: 32px; padding: 6px 7px; font-size: 8px; }
+  .game-wrap {
+    width: calc(100% - 20px);
+    margin: 0 auto max(8px, env(safe-area-inset-bottom));
+    padding: 0;
+  }
+  .hud {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 7px 10px;
+    min-height: 0;
+    padding: 9px 10px;
+  }
+  .hud-group { gap: 7px; }
+  .hud-group.left { grid-column: 1; grid-row: 1; }
+  .timer-wrap { grid-column: 2; grid-row: 1; min-width: 82px; }
+  .hud-group.right {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+  }
+  .hud-group.right > div:first-child { min-width: 68px; }
+  .hud-label { margin-bottom: 2px; font-size: 7px; letter-spacing: .08em; }
+  .hud-key { font-size: 13px; }
+  .hud-group.left .bar-track { width: clamp(54px, 19vw, 108px); }
+  .hud-group.right .bar-track { width: 100%; }
+  .bar-track { height: 10px; }
+  .hud-value { min-width: 29px; font-size: 9px; }
+  .timer { font-size: clamp(23px, 6vw, 30px); }
+  .arena { min-height: 170px; }
+  #gameCanvas { cursor: default; }
+  .arena-footer { right: 9px; bottom: 7px; left: 9px; justify-content: flex-end; font-size: 8px; }
+  .arena-footer .controls-hint { display: none; }
+  .touch-controls {
+    display: flex;
+    min-height: 94px;
+    padding: 9px 10px max(9px, env(safe-area-inset-bottom));
+  }
+  .dpad { grid-template-columns: repeat(3, clamp(38px, 11.5vw, 48px)); grid-template-rows: repeat(2, clamp(38px, 11.5vw, 48px)); gap: 3px; }
+  .touch-btn { min-width: 40px; min-height: 40px; font-size: 10px; }
+  .touch-actions { gap: 7px; }
+  .touch-actions .fire { min-width: clamp(58px, 16vw, 72px); min-height: 58px; font-size: 10px; }
+  .touch-actions .emp { min-width: clamp(52px, 14vw, 64px); min-height: 52px; font-size: 9px; }
+
+  .story-shell { padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)); }
+  .story-shell::after { width: 130vw; opacity: .08; }
+  .story-header { min-height: 44px; margin-bottom: 12px; gap: 10px; }
+  .story-logo { width: 96px; }
+  .story-top-button { min-height: 36px; padding: 8px 10px; font-size: 11px; }
+  .story-card {
+    width: 100%;
+    height: calc(100dvh - 92px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    min-height: 0;
+    padding: 20px 18px 14px;
+    border-radius: 5px;
+  }
+  .story-dot { flex-basis: 40px; width: 40px; height: 40px; }
+
+  .victory-modal { padding: 10px; align-items: flex-start; }
+  .victory-panel {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "hero"
+      "heading"
+      "body";
+    row-gap: 16px;
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - 20px);
+    padding: 20px;
+  }
+  .victory-hero {
+    height: 135px;
+  }
+  .victory-hero > img { width: 180px; height: 125px; }
+  .victory-heading::before { font-size: 10px; margin-bottom: 10px; }
+  .victory-title-lockup { max-width: 340px; margin-bottom: 16px; }
+  .victory-arrival {
+    grid-template-columns: 1fr;
+    grid-template-areas: "label" "time" "date";
+    row-gap: 6px;
+  }
+  .victory-arrival strong { font-size: 46px; }
+  .victory-meta { grid-template-columns: 1fr; gap: 16px; }
+  .victory-story { font-size: 14px; }
+  .victory-actions .primary-btn { width: 100%; }
+}
+
+/* Short Desktop Windows */
+@media (min-width: 761px) and (max-height: 720px) {
+  html, body { height: auto; min-height: 100dvh; }
+  body { overflow-y: auto; }
+  .game-wrap { min-height: 560px; }
+  .story-modal { height: auto; min-height: 100dvh; align-items: flex-start; overflow-y: auto; }
+  .story-shell { height: auto; min-height: 100dvh; overflow: visible; }
+  .story-card { height: auto; min-height: 0; max-height: none; }
+  .victory-panel { height: auto; max-height: none; overflow: visible; }
+}
+
+/* Wide Desktop Compensation */
+@media (min-width: 1400px) and (min-height: 800px) {
+  .story-shell { padding: clamp(24px, 2.2vh, 56px) clamp(28px, 5.5vw, 220px) clamp(24px, 2.2vh, 52px); }
+  .story-header { width: min(100%, 2600px); min-height: clamp(56px, 5.2vh, 112px); margin-bottom: clamp(18px, 2.5vh, 54px); }
+  .story-logo { width: clamp(140px, 7.2vw, 280px); }
+  .story-top-button { min-height: clamp(40px, 3.6vh, 72px); padding: clamp(9px, .7vw, 24px) clamp(14px, .9vw, 30px); font-size: clamp(13px, .62vw, 24px); }
+  .story-card {
+    width: clamp(780px, 42vw, 1650px);
+    height: clamp(778px, 76vh, 1650px);
+    min-height: 0;
+    padding: clamp(42px, 2.2vw, 86px) clamp(42px, 2.2vw, 86px) clamp(26px, 1.4vw, 54px);
+  }
+  .story-hero { flex-basis: clamp(300px, 28vh, 520px); }
+  .story-hero h1 { font-size: clamp(42px, 2.5vw, 92px); }
+  .story-copy { font-size: clamp(18px, .9vw, 32px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-splash-logo, .story-shell::after, .victory-hero > img,
+  .story-slide.is-entering .story-hero img,
+  .story-slide.is-entering .story-hero h1,
+  .story-slide.is-entering .story-copy p { animation: none !important; opacity: 1; transform: none; }
+  .intro-splash, .story-next:hover { transition: none; transform: none; }
+}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-lockup">
+      <img class="topbar-logo" src="assets/logo-festa.svg" data-dark-src="assets/logo-festa.svg" data-light-src="assets/logo-light.svg" alt="Victory Lap ’26">
+    </div>
+    <div class="topbar-right">
+      <div class="accessibility-controls" role="group" aria-label="Accessibility controls">
+        <button class="audio-toggle" id="lightModeBtn" type="button" aria-label="Enable light mode">LIGHT MODE</button>
+        <button class="audio-toggle" id="audioToggleBtn" type="button" aria-pressed="true"><span id="audioIcon">♫</span> <span id="audioLabel">AUDIO ACTIVE</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="game-wrap">
+    <section class="hud" aria-label="Mission status">
+      <div class="hud-group left">
+        <div>
+          <span class="hud-label">HULL INTEGRITY</span>
+          <span class="hud-key">HP</span>
+        </div>
+        <div class="bar-track" aria-label="Health"><div class="bar-fill" id="hudHpBar"></div></div>
+        <span class="hud-value" id="hudHpText">100%</span>
+      </div>
+      <div class="timer-wrap">
+        <span class="hud-label">PURGE DEADLINE</span>
+        <div class="timer" id="hudTimer">00:45.0</div>
+      </div>
+      <div class="hud-group right">
+        <div>
+          <span class="hud-label">EMP WIPE / [E]</span>
+          <span class="hud-key emp-key">EMP</span>
+        </div>
+        <div class="bar-track" aria-label="EMP charge"><div class="bar-fill emp" id="hudOverclockBar"></div></div>
+        <span class="hud-value" id="hudOverclockText">0%</span>
+      </div>
+    </section>
+
+    <section class="arena" aria-label="Arcade arena">
+      <canvas id="gameCanvas" tabindex="0" aria-label="Game area. Move with WASD or arrow keys, fire with Space, use EMP with E."></canvas>
+      <div class="arena-footer">
+        <span class="controls-hint"><strong>WASD / ARROWS</strong> MOVE &nbsp; <strong>SPACE / CLICK</strong> FIRE &nbsp; <strong>[E]</strong> EMP</span>
+        <span class="threat-count">THREATS CLEARED: <strong id="killCount">000</strong></span>
+      </div>
+    </section>
+
+    <section class="touch-controls" id="touchControls" aria-label="Touch controls">
+      <div class="dpad" aria-label="Movement">
+        <button class="touch-btn up" type="button" data-key="ArrowUp" aria-label="Move up">▲</button>
+        <button class="touch-btn left" type="button" data-key="ArrowLeft" aria-label="Move left">◀</button>
+        <button class="touch-btn down" type="button" data-key="ArrowDown" aria-label="Move down">▼</button>
+        <button class="touch-btn right" type="button" data-key="ArrowRight" aria-label="Move right">▶</button>
+      </div>
+      <div class="touch-actions">
+        <button class="touch-btn fire" id="touchFire" type="button">FIRE</button>
+        <button class="touch-btn emp" id="touchEmp" type="button">EMP</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="intro-splash" id="introSplash" aria-label="Victory Lap ’26 intro" role="dialog" aria-modal="true" tabindex="-1">
+    <img class="intro-splash-logo" src="assets/logo-festa.svg" alt="Victory Lap ’26">
+  </section>
+
+  <section class="modal story-modal" id="prologueModal" role="dialog" aria-modal="true" aria-labelledby="storyHeading">
+    <div class="story-shell">
+      <header class="story-header">
+        <img class="story-logo" src="assets/logo-festa.svg" data-dark-src="assets/logo-festa.svg" data-light-src="assets/logo-light.svg" alt="Victory Lap ’26">
+        <div class="story-header-actions">
+          <button class="story-top-button is-light" id="storyLightModeBtn" type="button" aria-label="Enable light mode">LIGHT MODE</button>
+        </div>
+      </header>
+
+      <main class="story-card" aria-label="The Glitch storyline">
+        <section class="story-slide is-active" data-story-slide="0" aria-labelledby="storyHeading" aria-hidden="false">
+          <div class="story-hero">
+            <img src="assets/story/origin.png" data-dark-src="assets/story/origin.png" data-light-src="assets/story/origin-light.png" alt="Legacy server racks and engineers in an old computer room">
+            <h1 id="storyHeading" tabindex="-1">THE<br>ORIGIN</h1>
+          </div>
+          <div class="story-copy">
+            <p>Years ago, a team at an unnamed cloud provider decided to train a model on the cheapest hardware they had lying around. They picked the region with the highest number of legacy servers, the one that had been “scheduled for deprecation” since 2016, but was still taking new customers.</p>
+            <p>They ran the job on VMs stacked onto a host server full of noisy neighbors. The job never converged, but it never crashed either. It just kept running, and at some point it stopped being a process and started behaving like a resident. Nobody knows when the first log line read <code>I am still here</code>.</p>
+            <p>An engineer opened a ticket, but the support team tagged it as <strong>Won't Fix:</strong> “host server is barely within SLA. Do not reboot.” So the instance kept running, and the team started calling it <strong>The Glitch.</strong></p>
+          </div>
+        </section>
+
+        <section class="story-slide" data-story-slide="1" aria-labelledby="storyHeading2" aria-hidden="true" hidden>
+          <div class="story-hero">
+            <img src="assets/story/spread.png" data-dark-src="assets/story/spread.png" data-light-src="assets/story/spread-light.png" alt="Legacy computer room connected to a world map">
+            <h1 id="storyHeading2" tabindex="-1">THE<br>SPREAD</h1>
+          </div>
+          <div class="story-copy">
+            <p>From that one region, it spread to the provider’s whole backbone, then to their customers' on-prem infra, and finally to everyone with internet access running past-EOL hardware.</p>
+            <p>It all started with legacy fleets worldwide randomly flickering, cursors blinking on their own, and tube monitors powering on at 3 AM, while every status page said: fully operational.</p>
+            <p>Nothing seemed harmful at first, until whole sectors of the world economy that ran on legacy systems saw their fleets become useless overnight. The Glitch didn’t crash them. It took them. The machines kept running, fans spinning, lights blinking, invoices still going out full of egress, but they stopped answering to their owners.</p>
+            <p>When engineers studied it, the pattern became obvious: The Glitch lives in deprecated things: legacy BIOS, old chipsets, hypervisors with ten years of unaddressed CVEs, VMs sharing a chip with noisy strangers, every monolith that was “going to be refactored next quarter.” It moves laterally over public internet paths and burrows into anything with a spinning disk.</p>
+          </div>
+        </section>
+
+        <section class="story-slide" data-story-slide="2" aria-labelledby="storyHeading3" aria-hidden="true" hidden>
+          <div class="story-hero">
+            <img src="assets/story/answer.png" data-dark-src="assets/story/answer.png" data-light-src="assets/story/answer-light.png" alt="An engineer inspecting modern bare metal server racks">
+            <h1 id="storyHeading3" tabindex="-1">THE<br>ANSWER</h1>
+          </div>
+          <div class="story-copy">
+            <p>Builders running on Latitude.sh noticed something: nothing ever happened to them.</p>
+            <p>Single-tenant bare metal gives it no hypervisor to hide in. Megaport’s private networking gives it no path to sniff. Latest-gen silicon and NVMe have no legacy surface for it to parse. We didn’t have to fight it off. The Glitch just can’t read our stack. To it, Latitude.sh doesn’t even exist.</p>
+            <p>That makes our platform the last clean ground on the map, and it makes the people who build and run it the only ones who can face it.</p>
+          </div>
+        </section>
+
+        <section class="story-slide" data-story-slide="3" aria-labelledby="storyHeading4" aria-hidden="true" hidden>
+          <div class="story-hero">
+            <img src="assets/story/hive.png" data-dark-src="assets/story/hive.png" data-light-src="assets/story/hive-light.png" alt="The old industrial building identified as the Glitch's Hive">
+            <h1 id="storyHeading4" tabindex="-1">THE<br>HIVE</h1>
+          </div>
+          <div class="story-copy">
+            <p>Every signal has a source, and we found The Glitch’s broadcast peak in São Paulo: a single building full of 1980s legacy systems and old circuit boards. For the Glitch, it isn’t a hiding place. It’s its home.</p>
+            <p>The signal from that place is the strongest reading anyone has measured, and it grows every week, showing The Glitch wants to evolve even more. A few days ago, our office printer printed <code>I am still here</code> multiple times, and it wasn’t even plugged in.</p>
+            <p>This means we need to act, and soon. But we can’t just lay siege to it or shut it down from the outside. Someone has to go in and clear it, cabinet by cabinet, process by process, room by room.</p>
+          </div>
+        </section>
+
+        <section class="story-slide" data-story-slide="4" aria-labelledby="storyHeading5" aria-hidden="true" hidden>
+          <div class="story-hero">
+            <img src="assets/story/call-to-deployment.png" data-dark-src="assets/story/call-to-deployment.png" data-light-src="assets/story/call-to-deployment-light.png" alt="A small robot entering a corridor lined with legacy computer systems">
+            <h1 id="storyHeading5" tabindex="-1">THE<br>CALL TO<br>DEPLOYMENT</h1>
+          </div>
+          <div class="story-copy">
+            <p>Anyone with legacy components in their stack who walks into the Hive walks out running something they didn’t install. Only people who’ve lived on immune infrastructure every day can enter the hive without being affected.</p>
+            <p>That’s one team. That’s us. The Latitude.sh team.</p>
+            <p>You have been called to join us in defeating The Glitch at its nest and getting rid of legacy systems once and for all. Let's go clear the Hive. Then we’ll all pretend this was just a team-building exercise, our <strong>Victory Lap.</strong></p>
+          </div>
+        </section>
+
+        <footer class="story-navigation">
+          <nav class="story-dots" aria-label="Story chapters">
+            <button type="button" class="story-dot is-active" data-story-dot="0" aria-label="Chapter 1: The Origin" aria-current="step"></button>
+            <button type="button" class="story-dot" data-story-dot="1" aria-label="Chapter 2: The Spread"></button>
+            <button type="button" class="story-dot" data-story-dot="2" aria-label="Chapter 3: The Answer"></button>
+            <button type="button" class="story-dot" data-story-dot="3" aria-label="Chapter 4: The Hive"></button>
+            <button type="button" class="story-dot" data-story-dot="4" aria-label="Chapter 5: The Call to Deployment"></button>
+          </nav>
+          <div class="story-nav-actions">
+            <button class="story-next" id="storyNextBtn" type="button" aria-label="Next chapter"><img src="assets/story-arrow.svg" data-dark-src="assets/story-arrow.svg" data-light-src="assets/story-arrow-light.svg" alt=""></button>
+            <button class="primary-btn story-continue" id="startMissionBtn" type="button" hidden>CONTINUE TO BRIEFING <span aria-hidden="true">↗</span></button>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </section>
+
+  <section class="modal" id="tutorialModal" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" hidden>
+    <div class="panel clean-brief">
+      <div class="eyebrow">FIELD CONTROLS</div>
+      <h2 class="tutorial-title" id="tutorialTitle">CLEAR THE HIVE.</h2>
+      <ul class="instruction-list">
+        <li><kbd>W A S D</kbd><span>MOVE <small>Arrow keys also work</small></span></li>
+        <li><kbd>SPACE</kbd><span>FIRE <small>Mouse click also fires</small></span></li>
+        <li><kbd>E</kbd><span>EMP WIPE <small>Available at 100% charge</small></span></li>
+      </ul>
+      <div class="clean-objective">
+        <span>OBJECTIVE</span>
+        <strong>SURVIVE 45 SECONDS. CLEAR ALL THREATS.</strong>
+      </div>
+      <div class="btn-row"><button class="primary-btn" id="beginCombatBtn" type="button">ENTER THE HIVE</button></div>
+    </div>
+  </section>
+
+  <section class="modal victory-modal" id="victoryModal" role="dialog" aria-modal="true" aria-labelledby="victoryTitle" hidden>
+    <div class="panel victory-panel">
+      <div class="victory-heading">
+        <h2 id="victoryTitle" class="victory-title-lockup"><img src="assets/logo-festa.svg" data-dark-src="assets/logo-festa.svg" data-light-src="assets/logo-light.svg" alt="Victory Lap ’26"></h2>
+        <div class="victory-arrival">
+          <span class="event-kicker">ARRIVAL TIME · PLEASE BE ON TIME</span>
+          <strong>11:00 <small>AM</small></strong>
+          <time datetime="2026-12-03">DECEMBER 3, 2026</time>
+        </div>
+      </div>
+
+      <div class="victory-hero">
+        <img src="assets/rocket.png" alt="Latitude robot mascot riding a rocket" id="victorySprite">
+      </div>
+
+      <div class="victory-body">
+        <section class="victory-meta" aria-label="Event details">
+          <div class="victory-location">
+            <span class="event-kicker">THE GLITCH’S HIVE</span>
+            <strong>ARENA PIXEL</strong>
+            <address lang="pt-BR">Rua Girassol, 925 · Vila Madalena · São Paulo, SP · 05433-002 · Brazil</address>
+            <a class="venue-map-link" href="https://maps.app.goo.gl/dimSa2ssFywRghsR7" target="_blank" rel="noopener noreferrer">OPEN MAP <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+          </div>
+          <div class="victory-dresscode">
+            <span class="event-kicker">DRESS CODE</span>
+            <strong>LIGHT, SUMMER CLOTHING</strong>
+            <p>The venue gets warm. Dress light and comfortably.</p>
+          </div>
+        </section>
+        <div class="victory-story">
+          <p>Our Loop Crew has made sure you’ll have every resource you need to make this deployment one you’ll always remember. Each person who joins us will be assigned to a specific unit, with its own badge and dedicated tools.</p>
+          <p>A few chambers inside, each holding one of the Glitch’s core processes. Each unit sends in squads of six. Every squad runs every chamber. The clock starts when a squad crosses the first line and stops when it clears the last chamber. <strong>The three fastest squads go on the Leaderboard and leave with amazing prizes.</strong></p>
+          <p>Once the mission is completed, the extraction will happen at 16:00, and we’ll all go to our Safe House, a sub-level location three blocks away. Classified until you’ve cleared the deployment.</p>
+        </div>
+        <div class="victory-actions">
+          <button class="primary-btn" type="button" id="downloadIcsBtn">ADD TO CALENDAR <span aria-hidden="true">↗</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="gameOverModal" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle" hidden>
+    <div class="panel gameover-panel">
+      <div class="eyebrow">CONNECTION LOST / INSTANCE TERMINATED</div>
+      <h2 id="gameOverTitle">SYSTEM<br>OVERRUN</h2>
+      <p>The rogue hypervisor consumed your instance. The Glitch still controls the packet routing table.</p>
+      <div class="gameover-stats" id="gameOverStats">THREATS CLEARED: 000</div>
+      <button class="primary-btn" id="retryBtn" type="button">REBOOT BARE METAL INSTANCE</button>
+    </div>
+  </section>
+
+  <script>(() => {
+  const body = document.body;
+  const lightButtons = ['lightModeBtn', 'storyLightModeBtn']
+    .map(id => document.getElementById(id)).filter(Boolean);
+
+  function updateThemeAssets() {
+    const light = body.classList.contains('light-mode');
+    document.querySelectorAll('[data-dark-src][data-light-src]').forEach(img => {
+      const next = light ? img.dataset.lightSrc : img.dataset.darkSrc;
+      if (next && img.getAttribute('src') !== next) img.setAttribute('src', next);
+    });
+  }
+
+  function setLightMode(enabled) {
+    body.classList.toggle('light-mode', enabled);
+    lightButtons.forEach(btn => {
+      btn.textContent = enabled ? 'DARK MODE' : 'LIGHT MODE';
+      btn.setAttribute('aria-label', enabled ? 'Enable dark mode' : 'Enable light mode');
+    });
+    updateThemeAssets();
+    document.dispatchEvent(new CustomEvent('latitude-theme-change', { detail: { light: enabled } }));
+  }
+
+  updateThemeAssets();
+
+  lightButtons.forEach(btn => btn.addEventListener('click', () => {
+    setLightMode(!body.classList.contains('light-mode'));
+  }));
+})();</script>
+<script>
+(() => {
+  const splash = document.getElementById('introSplash');
+  if (!splash) return;
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  const duration = reduceMotion ? 350 : 1550;
+  const background = [...document.body.children].filter(node =>
+    node !== splash && !['SCRIPT', 'STYLE'].includes(node.tagName)
+  );
+  background.forEach(node => { node.inert = true; });
+  splash.focus({ preventScroll: true });
+
+  let dismissed = false;
+  function dismissSplash() {
+    if (dismissed) return;
+    dismissed = true;
+    splash.classList.add('is-leaving');
+    window.setTimeout(() => {
+      splash.remove();
+      background.forEach(node => { node.inert = false; });
+      document.getElementById('storyHeading')?.focus({ preventScroll: true });
+    }, reduceMotion ? 0 : 460);
+  }
+  const timer = window.setTimeout(dismissSplash, duration);
+  splash.addEventListener('click', () => {
+    window.clearTimeout(timer);
+    dismissSplash();
+  }, { once: true });
+  splash.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'Escape') {
+      event.preventDefault();
+      window.clearTimeout(timer);
+      dismissSplash();
+    }
+  });
+})();
+</script>
+<script src="game.js" defer></script>
+</body>
+</html>
