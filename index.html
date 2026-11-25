@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#070800">
-  <meta name="description" content="VICTORY LAP ’26. Clear the Hive in this Latitude.sh arcade deployment.">
+  <meta name="description" content="VICTORY LAP ’26 at Arena Pixel, São Paulo.">
   <title>LATITUDE.SH // VICTORY LAP ’26</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -177,6 +177,38 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
   touch-action: none;
   cursor: crosshair;
 }
+.skip-gameplay-btn {
+  position: absolute;
+  z-index: 4;
+  top: 14px;
+  right: 14px;
+  min-height: 34px;
+  padding: 8px 11px;
+  border: 1px solid rgba(224,254,86,.48);
+  border-radius: 0;
+  color: #E0FE56;
+  background: rgba(7,8,0,.82);
+  font: 700 9px/1 var(--mono);
+  letter-spacing: .1em;
+  cursor: pointer;
+}
+.skip-gameplay-btn:hover,
+.skip-gameplay-btn:focus-visible {
+  color: #070800;
+  background: #E0FE56;
+  border-color: #E0FE56;
+}
+body.light-mode .skip-gameplay-btn {
+  color: #354500;
+  border-color: rgba(53,69,0,.55);
+  background: rgba(255,255,255,.94);
+}
+body.light-mode .skip-gameplay-btn:hover,
+body.light-mode .skip-gameplay-btn:focus-visible {
+  color: #fff;
+  background: #354500;
+  border-color: #354500;
+}
 .arena-footer {
   position: absolute;
   z-index: 2;
@@ -294,7 +326,7 @@ h1, h2, h3, p { margin-top: 0; }
 .intro-splash.is-leaving { opacity: 0; visibility: hidden; pointer-events: none; }
 .intro-splash-logo {
   display: block;
-  width: clamp(180px, 18vw, 340px);
+  width: clamp(216px, 21.6vw, 408px);
   height: auto;
   opacity: 0;
   transform: translateY(10px) scale(.94);
@@ -363,6 +395,9 @@ h1, h2, h3, p { margin-top: 0; }
 }
 .story-header, .story-card { position: relative; z-index: 1; }
 .story-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -371,6 +406,8 @@ h1, h2, h3, p { margin-top: 0; }
   width: min(100%, 1280px);
   min-height: 56px;
   margin: 0 auto clamp(16px, 2.5vh, 28px);
+  padding-block: 8px;
+  background: #070800;
 }
 .story-logo { display: block; width: clamp(112px, 9.2vw, 140px); height: auto; }
 .story-header-actions { display: flex; align-items: center; gap: 12px; }
@@ -405,7 +442,7 @@ h1, h2, h3, p { margin-top: 0; }
 .story-slide { display: none; flex: 1 1 auto; min-height: 0; flex-direction: column; }
 .story-slide.is-active { display: flex; }
 .story-slide[aria-hidden="true"] { display: none !important; }
-.story-hero { position: relative; flex: 0 0 clamp(230px, 30vh, 300px); min-height: 0; width: 100%; }
+.story-hero { position: relative; flex: 0 0 clamp(270px, 34vh, 340px); min-height: 0; width: 100%; }
 .story-hero img {
   position: absolute;
   top: 0;
@@ -417,12 +454,14 @@ h1, h2, h3, p { margin-top: 0; }
   user-select: none;
   pointer-events: none;
 }
+.story-hero h1:focus { outline: none; }
+
 .story-hero h1 {
   position: absolute;
   z-index: 1;
   left: 0;
-  bottom: 0;
-  max-width: 58%;
+  bottom: 18px;
+  max-width: 52%;
   margin: 0;
   color: var(--lime);
   font: 900 clamp(36px, 3vw, 42px)/.93 var(--display);
@@ -432,7 +471,7 @@ h1, h2, h3, p { margin-top: 0; }
 .story-copy {
   flex: 1 1 auto;
   min-height: 0;
-  margin-top: 18px;
+  margin-top: 22px;
   padding: 0 0 8px;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -518,7 +557,16 @@ h1, h2, h3, p { margin-top: 0; }
 .story-next:hover { transform: translateX(3px); }
 .story-continue { min-height: 44px; padding: 11px 16px; font-size: 10px; }
 
-/* Tutorial Briefing Modal */
+
+/* Pre-game warm-up label */
+.training-kicker {
+  margin: 0 0 12px;
+  color: var(--lime);
+  font: 700 11px/1.4 var(--mono);
+  letter-spacing: .2em;
+}
+body.light-mode .training-kicker { color: #354500; }
+\n/* Tutorial Briefing Modal */
 .clean-brief {
   width: min(560px, 100%);
   padding: clamp(24px, 4vw, 42px);
@@ -578,6 +626,11 @@ kbd {
 .clean-objective span { color: var(--lime); font: 700 10px/1.2 var(--mono); letter-spacing: .14em; }
 .clean-objective strong { color: var(--white); font: 700 14px/1.45 var(--mono); letter-spacing: .025em; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+#skipTrainingBtn { min-width: 164px; }
+@media (max-width: 520px) {
+  #tutorialModal .btn-row { flex-direction: column; }
+  #tutorialModal .btn-row button { width: 100%; }
+}
 
 /* Game Over Modal */
 .gameover-panel { width: min(560px, 100%); text-align: center; }
@@ -647,18 +700,10 @@ kbd {
   grid-area: body;
   min-width: 0;
 }
-.victory-heading::before {
-  content: "WARM UP YOURSELF!";
-  display: block;
-  margin: 0 0 14px;
-  color: #fff;
-  font: 700 12px/1.4 var(--mono);
-  letter-spacing: .2em;
-}
 .victory-title-lockup {
   display: block;
-  width: min(100%, 440px);
-  max-width: 440px;
+  width: min(100%, 352px);
+  max-width: 352px;
   margin: 0 0 22px;
   font-size: 0;
   line-height: 0;
@@ -672,11 +717,11 @@ kbd {
 .victory-arrival {
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-areas: "label label" "time date";
+  grid-template-areas: "time date" "label label";
   justify-content: start;
   align-items: baseline;
   column-gap: 18px;
-  row-gap: 6px;
+  row-gap: 9px;
   margin: 0;
 }
 .victory-arrival .event-kicker {
@@ -751,6 +796,9 @@ kbd {
 .victory-story strong { color: #fff; font-weight: 700; }
 .victory-actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
   margin-top: 22px;
 }
 .victory-actions .primary-btn {
@@ -762,6 +810,8 @@ kbd {
   font: 800 10px/1 var(--mono);
   letter-spacing: .12em;
 }
+.victory-actions a { text-decoration: none; }
+.victory-actions .secondary-btn { min-height: 48px; padding: 12px 20px; font-size: 10px; }
 .victory-actions .primary-btn:hover {
   background: #516200;
   border-color: #516200;
@@ -820,6 +870,7 @@ body.light-mode button:focus-visible, body.light-mode canvas:focus-visible { out
 
 /* Light Mode Story */
 body.light-mode .story-modal { background: #F5F5EF; }
+body.light-mode .story-header { background: #F5F5EF; }
 body.light-mode .story-shell::before { opacity: .07; background-image: radial-gradient(rgba(81,98,0,.32) .8px, transparent .9px); }
 body.light-mode .story-shell::after { opacity: .12; }
 body.light-mode .story-card { background: rgba(255,255,255,.94); border-color: rgba(81,98,0,.32); box-shadow: 0 18px 70px rgba(30,40,0,.09); }
@@ -835,7 +886,6 @@ body.light-mode .story-top-button:hover { color: #fff; background: var(--earth-2
 /* Light Mode Victory */
 body.light-mode .victory-modal { background: rgba(15,18,6,.72); }
 body.light-mode .victory-panel { background: #fff; border-color: #AEBB8B; box-shadow: 0 22px 80px rgba(15,25,0,.24); }
-body.light-mode .victory-heading::before,
 body.light-mode .victory-arrival .event-kicker { color: #171910; }
 body.light-mode .victory-arrival strong,
 body.light-mode .event-kicker,
@@ -967,17 +1017,16 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
     height: 135px;
   }
   .victory-hero > img { width: 180px; height: 125px; }
-  .victory-heading::before { font-size: 10px; margin-bottom: 10px; }
-  .victory-title-lockup { max-width: 340px; margin-bottom: 16px; }
+  .victory-title-lockup { max-width: 272px; margin-bottom: 16px; }
   .victory-arrival {
     grid-template-columns: 1fr;
-    grid-template-areas: "label" "time" "date";
-    row-gap: 6px;
+    grid-template-areas: "time" "date" "label";
+    row-gap: 7px;
   }
   .victory-arrival strong { font-size: 46px; }
   .victory-meta { grid-template-columns: 1fr; gap: 16px; }
   .victory-story { font-size: 14px; }
-  .victory-actions .primary-btn { width: 100%; }
+  .victory-actions .primary-btn, .victory-actions .secondary-btn { width: 100%; }
 }
 
 /* Short Desktop Windows */
@@ -1008,6 +1057,58 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
   .story-copy { font-size: clamp(18px, .9vw, 32px); }
 }
 
+/* Accessible story flow for browser zoom and low-vision use */
+@media (max-height: 760px), (max-width: 900px) {
+  .story-modal {
+    height: auto;
+    min-height: 100dvh;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .story-shell {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+  .story-header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+  .story-card {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    margin: 0 auto 20px;
+    overflow: visible;
+  }
+  .story-slide.is-active {
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+  .story-hero {
+    flex: 0 0 clamp(250px, 36vh, 340px);
+  }
+  .story-hero h1 {
+    bottom: 18px;
+    max-width: 52%;
+  }
+  .story-copy {
+    flex: 0 0 auto;
+    min-height: auto;
+    margin-top: 22px;
+    overflow: visible;
+    scrollbar-width: auto;
+  }
+  .story-navigation {
+    position: relative;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .intro-splash-logo, .story-shell::after, .victory-hero > img,
   .story-slide.is-entering .story-hero img,
@@ -1015,7 +1116,978 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
   .story-slide.is-entering .story-copy p { animation: none !important; opacity: 1; transform: none; }
   .intro-splash, .story-next:hover { transition: none; transform: none; }
 }
-  </style>
+  
+/* Final accessibility + invitation hierarchy pass */
+.story-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 76px !important;
+  margin: 0 !important;
+  padding: 12px clamp(18px, 5.5vw, 80px) !important;
+  background: #070800 !important;
+  border-bottom: 1px solid rgba(224,254,86,.14);
+}
+body.light-mode .story-header {
+  background: #F5F5EF !important;
+  border-bottom-color: rgba(81,98,0,.18);
+}
+.story-shell {
+  padding-top: 104px !important;
+}
+.victory-panel {
+  grid-template-columns: minmax(0, 1.2fr) minmax(190px, .8fr) !important;
+  grid-template-rows: auto auto auto !important;
+  grid-template-areas:
+    "heading hero"
+    "arrival arrival"
+    "body body" !important;
+  align-items: center !important;
+  column-gap: clamp(24px, 4vw, 54px) !important;
+  row-gap: 10px !important;
+  width: min(900px, calc(100vw - 40px)) !important;
+  max-width: 900px !important;
+  padding: clamp(28px, 3.2vw, 42px) clamp(30px, 4vw, 48px) !important;
+}
+.victory-heading {
+  grid-area: heading !important;
+  align-self: center !important;
+}
+.victory-title-lockup {
+  width: min(100%, 270px) !important;
+  max-width: 270px !important;
+  margin: 0 !important;
+}
+.victory-hero {
+  grid-area: hero !important;
+  height: 150px !important;
+  max-height: 150px !important;
+}
+.victory-hero > img {
+  width: 100% !important;
+  max-width: 205px !important;
+  height: 150px !important;
+}
+.victory-arrival {
+  grid-area: arrival !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  margin: 8px 0 6px !important;
+  padding: 22px 0 20px !important;
+  border-top: 1px solid rgba(224,254,86,.25);
+  border-bottom: 1px solid rgba(224,254,86,.25);
+}
+.victory-arrival .event-kicker {
+  display: block !important;
+  margin: 0 !important;
+  color: #fff !important;
+  font-size: 11px !important;
+  letter-spacing: .16em !important;
+}
+.victory-arrival-line {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  row-gap: 4px;
+}
+.victory-arrival strong {
+  color: #E0FE56 !important;
+  font: 900 clamp(48px, 5.2vw, 64px)/.95 var(--display) !important;
+  letter-spacing: -.045em !important;
+}
+.victory-arrival strong small { font-size: .38em !important; vertical-align: .12em !important; }
+.victory-arrival time {
+  padding: 0 0 5px !important;
+  color: #A6AA91 !important;
+  font: 600 11px/1.4 var(--mono) !important;
+  letter-spacing: .13em !important;
+}
+.victory-body { grid-area: body !important; }
+.victory-meta {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr) !important;
+  gap: clamp(22px, 4vw, 42px) !important;
+  margin-bottom: 18px !important;
+  padding: 18px 0 !important;
+}
+.victory-location address {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+body.light-mode .victory-arrival .event-kicker { color: #171910 !important; }
+body.light-mode .victory-arrival {
+  border-color: rgba(81,98,0,.30);
+}
+@media (max-width: 760px) {
+  .story-header {
+    min-height: 64px !important;
+    padding: 10px 14px !important;
+  }
+  .story-shell { padding-top: 78px !important; }
+  .victory-panel {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto auto auto !important;
+    grid-template-areas:
+      "heading"
+      "hero"
+      "arrival"
+      "body" !important;
+    row-gap: 8px !important;
+    padding: 22px 20px !important;
+  }
+  .victory-title-lockup {
+    width: min(100%, 220px) !important;
+    max-width: 220px !important;
+  }
+  .victory-hero {
+    height: 112px !important;
+    max-height: 112px !important;
+    justify-content: flex-start !important;
+  }
+  .victory-hero > img {
+    width: 155px !important;
+    max-width: 155px !important;
+    height: 112px !important;
+  }
+  .victory-arrival {
+    margin-top: 8px !important;
+    padding: 18px 0 !important;
+  }
+  .victory-arrival strong { font-size: 50px !important; }
+  .victory-arrival time { font-size: 10px !important; }
+  .victory-meta {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+  
+/* Contrast, scroll spacing and final-seconds cue */
+.story-copy {
+  padding-right: 22px !important;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--earth-2) transparent;
+}
+.story-copy::-webkit-scrollbar { width: 10px; }
+.story-copy::-webkit-scrollbar-track { margin-block: 3px; background: transparent; }
+.story-copy::-webkit-scrollbar-thumb { border: 2px solid transparent; background-clip: padding-box; border-radius: 10px; }
+body.light-mode .story-copy {
+  scrollbar-color: #516200 transparent !important;
+}
+body.light-mode .story-copy::-webkit-scrollbar-thumb {
+  background: #516200 !important;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+body.light-mode .story-copy code,
+body.light-mode .story-hero h1,
+body.light-mode .story-next,
+body.light-mode .story-dot.is-active::after,
+body.light-mode .story-top-button {
+  color: #354500 !important;
+}
+body.light-mode .story-copy code { background: rgba(81,98,0,.08); }
+body.light-mode .victory-arrival strong { color: #516200 !important; }
+body.light-mode .victory-arrival .event-kicker { color: #171910 !important; }
+body.light-mode .venue-map-link { color: #354500 !important; }
+body.light-mode .victory-panel .primary-btn,
+body.light-mode .victory-panel .calendar-btn {
+  background: #516200 !important;
+  color: #fff !important;
+  border-color: #516200 !important;
+}
+.countdown-overlay {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: rgba(3,5,0,.16);
+}
+.countdown-overlay[hidden] { display: none !important; }
+.countdown-overlay span {
+  display: block;
+  color: #fff;
+  font: 900 clamp(112px, 22vw, 260px)/.8 var(--display);
+  letter-spacing: -.06em;
+  text-shadow: 0 0 28px rgba(224,254,86,.45), 0 8px 0 rgba(0,0,0,.25);
+  animation: countdown-pop .82s cubic-bezier(.18,.72,.22,1) both, countdown-flash .42s ease-in-out .12s 2;
+}
+@keyframes countdown-pop {
+  0% { opacity: 0; transform: scale(1.45); }
+  18% { opacity: 1; transform: scale(.94); }
+  35% { transform: scale(1.04); }
+  55%,100% { opacity: 1; transform: scale(1); }
+}
+@keyframes countdown-flash {
+  0%,100% { filter: brightness(1); }
+  50% { filter: brightness(1.8); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .countdown-overlay span { animation: none; }
+}
+@media (max-width: 900px) {
+  .story-copy { padding-right: 18px !important; }
+}
+
+  
+
+/* Final invitation information: consistent type scale and a single vertical stack */
+.victory-arrival {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  border-top: 0 !important;
+  border-bottom: 1px solid rgba(224,254,86,.25) !important;
+  padding: 20px 0 22px !important;
+  margin: 8px 0 0 !important;
+}
+.victory-arrival-line {
+  display: flex !important;
+  align-items: baseline !important;
+  flex-wrap: wrap !important;
+  gap: 8px 24px !important;
+}
+.victory-arrival strong,
+.victory-arrival strong small,
+.victory-arrival time {
+  font-family: var(--mono) !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+  letter-spacing: .10em !important;
+  text-transform: uppercase !important;
+  white-space: normal !important;
+  vertical-align: baseline !important;
+  padding: 0 !important;
+}
+.victory-arrival strong {
+  color: #E0FE56 !important;
+  letter-spacing: .06em !important;
+}
+.victory-arrival strong small {
+  font-size: inherit !important;
+}
+.victory-arrival time {
+  color: #D1D2C8 !important;
+}
+.victory-meta {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 22px !important;
+  margin: 0 0 20px !important;
+  padding: 22px 0 20px !important;
+  border-top: 0 !important;
+  border-bottom: 1px solid rgba(224,254,86,.25) !important;
+}
+.victory-meta > div {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+.victory-location address {
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+}
+body.light-mode .victory-arrival time {
+  color: #4A4F3B !important;
+}
+body.light-mode .victory-arrival strong {
+  color: #516200 !important;
+}
+@media (max-width: 760px) {
+  .victory-arrival-line { gap: 4px 14px !important; }
+  .victory-arrival strong,
+  .victory-arrival strong small,
+  .victory-arrival time { font-size: 14px !important; }
+  .victory-meta { gap: 18px !important; }
+}
+
+
+
+/* Mobile refinement: reduce story hero dead space and use one page-level scroll */
+@media (max-width: 760px) {
+  .story-card { padding: 16px 16px 12px !important; }
+  .story-hero {
+    flex: 0 0 clamp(158px, 22svh, 205px) !important;
+    min-height: 0 !important;
+    align-items: center !important;
+  }
+  .story-hero img {
+    max-height: 190px !important;
+    object-fit: contain !important;
+    object-position: center right !important;
+  }
+  .story-hero h1 {
+    align-self: end !important;
+    bottom: auto !important;
+    margin-bottom: 8px !important;
+    font-size: clamp(30px, 7vw, 38px) !important;
+    line-height: .94 !important;
+  }
+  .story-copy { margin-top: 12px !important; padding-right: 16px !important; }
+
+  /* The modal is the only scroll container on mobile. */
+  .victory-modal {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding: max(10px, env(safe-area-inset-top)) 10px max(14px, env(safe-area-inset-bottom)) !important;
+  }
+  .victory-panel {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(88px, 116px) !important;
+    grid-template-rows: auto auto auto !important;
+    grid-template-areas: "heading hero" "arrival arrival" "body body" !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    row-gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 18px 16px max(18px, env(safe-area-inset-bottom)) !important;
+    overflow: visible !important;
+  }
+  .victory-heading { grid-area: heading !important; min-width: 0 !important; }
+  .victory-title-lockup {
+    width: min(100%, 210px) !important;
+    max-width: 210px !important;
+    margin: 0 !important;
+  }
+  .victory-hero {
+    grid-area: hero !important;
+    width: 100% !important;
+    height: 104px !important;
+    min-width: 0 !important;
+    justify-self: end !important;
+  }
+  .victory-hero > img {
+    width: 100% !important;
+    max-width: 116px !important;
+    height: 104px !important;
+    object-fit: contain !important;
+  }
+  .victory-arrival {
+    grid-area: arrival !important;
+    margin: 6px 0 0 !important;
+    padding: 14px 0 16px !important;
+    gap: 7px !important;
+  }
+  .victory-arrival-line {
+    align-items: baseline !important;
+    flex-wrap: wrap !important;
+    gap: 3px 12px !important;
+  }
+  .victory-arrival strong,
+  .victory-arrival strong small,
+  .victory-arrival time {
+    font-size: clamp(13px, 3.5vw, 15px) !important;
+    line-height: 1.45 !important;
+  }
+  .victory-body { grid-area: body !important; min-width: 0 !important; }
+  .victory-meta {
+    gap: 16px !important;
+    margin-bottom: 16px !important;
+    padding: 16px 0 !important;
+  }
+  .victory-story { font-size: 14px !important; line-height: 1.55 !important; }
+  .victory-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 9px !important;
+    margin-top: 18px !important;
+    padding-bottom: 2px;
+  }
+  .victory-actions .primary-btn,
+  .victory-actions .secondary-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Narrow phones: retain the side-by-side brand lockup without clipping. */
+@media (max-width: 380px) {
+  .victory-panel {
+    grid-template-columns: minmax(0, 1fr) 88px !important;
+    padding-inline: 13px !important;
+  }
+  .victory-title-lockup { max-width: 178px !important; }
+  .victory-hero, .victory-hero > img { height: 88px !important; }
+  .victory-arrival-line { gap: 3px 9px !important; }
+}
+
+
+
+/* Viewport containment + exclusive final dialog state */
+#victoryModal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+  display: flex;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)) !important;
+  overscroll-behavior: contain;
+}
+#victoryModal[hidden] { display: none !important; }
+#victoryModal > .victory-panel {
+  flex: 0 1 900px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 900px !important;
+  max-height: calc(100dvh - 24px) !important;
+  min-height: 0 !important;
+  margin: auto !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+#victoryModal .victory-body,
+#victoryModal .victory-heading,
+#victoryModal .victory-arrival,
+#victoryModal .victory-meta,
+#victoryModal .victory-story,
+#victoryModal .victory-actions { min-width: 0 !important; max-width: 100% !important; }
+#victoryModal .victory-location address,
+#victoryModal .victory-dresscode p { overflow-wrap: anywhere; }
+
+@media (max-width: 900px) {
+  #victoryModal { align-items: flex-start !important; }
+  #victoryModal > .victory-panel {
+    flex: 0 1 auto !important;
+    width: 100% !important;
+    max-width: 680px !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+  }
+}
+@media (max-width: 760px) {
+  #victoryModal {
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)) !important;
+  }
+  #victoryModal > .victory-panel {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto auto !important;
+    grid-template-areas: "heading" "hero" "arrival" "body" !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 18px 16px max(18px, env(safe-area-inset-bottom)) !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #victoryModal .victory-heading { grid-area: heading !important; }
+  #victoryModal .victory-title-lockup { width: min(100%, 190px) !important; max-width: 190px !important; }
+  #victoryModal .victory-hero { grid-area: hero !important; height: 100px !important; max-height: 100px !important; justify-content: flex-start !important; }
+  #victoryModal .victory-hero > img { width: 140px !important; max-width: 140px !important; height: 100px !important; }
+  #victoryModal .victory-arrival { grid-area: arrival !important; }
+  #victoryModal .victory-body { grid-area: body !important; }
+  #victoryModal .victory-actions { display: grid !important; grid-template-columns: minmax(0,1fr) !important; }
+  #victoryModal .victory-actions > * { width: 100% !important; min-width: 0 !important; }
+}
+@media (max-width: 360px) {
+  #victoryModal > .victory-panel { padding-inline: 12px !important; }
+  #victoryModal .victory-title-lockup { max-width: 168px !important; }
+  #victoryModal .victory-arrival-line { gap: 4px 10px !important; }
+}
+
+
+
+/* Briefing redesign: clear hierarchy, useful negative space, stronger control grouping */
+.clean-brief {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.05fr) minmax(330px, .95fr) !important;
+  grid-template-areas:
+    "kicker kicker"
+    "eyebrow eyebrow"
+    "title controls"
+    "objective controls"
+    "actions actions" !important;
+  align-items: start !important;
+  column-gap: clamp(28px, 4vw, 64px) !important;
+  row-gap: 12px !important;
+  width: min(980px, calc(100vw - 48px)) !important;
+  max-width: 980px !important;
+  padding: clamp(28px, 4vw, 56px) !important;
+}
+.clean-brief > .training-kicker { grid-area: kicker; margin: 0 0 2px !important; }
+.clean-brief > .eyebrow { grid-area: eyebrow; margin: 0 !important; }
+.clean-brief > .tutorial-title {
+  grid-area: title;
+  align-self: end;
+  max-width: 540px;
+  margin: 4px 0 0 !important;
+  font-size: clamp(48px, 6.2vw, 82px) !important;
+  line-height: .88 !important;
+  letter-spacing: -.025em;
+}
+.clean-brief > .instruction-list {
+  grid-area: controls;
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  margin: 0 !important;
+}
+.clean-brief .instruction-list li {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  min-height: 68px;
+  padding: 12px 14px;
+}
+.clean-brief .instruction-list li span {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+.clean-brief .instruction-list li small {
+  line-height: 1.45;
+}
+.clean-brief kbd {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+}
+.clean-brief > .clean-objective {
+  grid-area: objective;
+  align-self: start;
+  margin: 8px 0 0 !important;
+  padding: 18px 0 20px !important;
+}
+.clean-brief > .btn-row {
+  grid-area: actions;
+  align-self: end;
+  padding-top: 8px;
+  margin-top: 2px;
+}
+.clean-brief .btn-row button {
+  min-height: 52px;
+  padding-inline: 26px;
+}
+
+/* Give the mascot/rocket more visual weight without enlarging the whole header. */
+.victory-hero {
+  height: 190px !important;
+  max-height: 190px !important;
+}
+.victory-hero > img {
+  max-width: 275px !important;
+  height: 190px !important;
+}
+
+/* Compact, readable briefing layout on tablets and phones. */
+@media (max-width: 760px) {
+  .clean-brief {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      "kicker"
+      "eyebrow"
+      "title"
+      "controls"
+      "objective"
+      "actions" !important;
+    width: min(100%, 620px) !important;
+    max-width: 620px !important;
+    row-gap: 10px !important;
+    padding: clamp(20px, 5vw, 30px) !important;
+  }
+  .clean-brief > .tutorial-title {
+    max-width: 100%;
+    margin: 2px 0 8px !important;
+    font-size: clamp(42px, 10vw, 64px) !important;
+    line-height: .9 !important;
+  }
+  .clean-brief > .instruction-list {
+    gap: 8px;
+  }
+  .clean-brief .instruction-list li {
+    grid-template-columns: 82px minmax(0, 1fr);
+    min-height: 60px;
+    gap: 12px;
+    padding: 10px 12px;
+  }
+  .clean-brief > .clean-objective {
+    margin-top: 4px !important;
+    padding: 14px 0 16px !important;
+  }
+  .clean-brief > .btn-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 9px;
+    padding-top: 2px;
+  }
+  .clean-brief .btn-row button {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    padding-inline: 10px;
+    font-size: 10px;
+  }
+
+  .victory-hero {
+    height: 165px !important;
+    max-height: 165px !important;
+  }
+  .victory-hero > img {
+    width: 220px !important;
+    max-width: 220px !important;
+    height: 160px !important;
+  }
+}
+@media (max-width: 420px) {
+  .clean-brief > .btn-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .clean-brief .instruction-list li {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .clean-brief .instruction-list li small {
+    font-size: 10px;
+  }
+}
+
+
+
+/* Final briefing pass: use the compact, single-column mobile composition at every viewport. */
+.clean-brief {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  width: min(760px, calc(100vw - 40px)) !important;
+  max-width: 760px !important;
+  max-height: min(90dvh, 900px) !important;
+  overflow-y: auto !important;
+  padding: clamp(24px, 4vw, 42px) !important;
+}
+.clean-brief > .training-kicker {
+  display: block !important;
+  margin: 0 0 18px !important;
+}
+.clean-brief > .tutorial-title {
+  max-width: none !important;
+  margin: 0 0 26px !important;
+  font-size: clamp(44px, 5.2vw, 64px) !important;
+  line-height: .92 !important;
+  letter-spacing: -.02em !important;
+}
+.clean-brief > .instruction-list {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 9px !important;
+  margin: 0 0 20px !important;
+}
+.clean-brief .instruction-list li {
+  display: grid !important;
+  grid-template-columns: 116px minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-content: start !important;
+  gap: 16px !important;
+  min-height: 66px !important;
+  padding: 10px 14px !important;
+}
+.clean-brief .instruction-list li kbd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 40px !important;
+  padding: 8px 10px !important;
+  white-space: nowrap !important;
+  font-size: 11px !important;
+}
+.clean-brief .instruction-list li span {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+  line-height: 1.25 !important;
+}
+.clean-brief .instruction-list li small {
+  display: block !important;
+  line-height: 1.4 !important;
+}
+.clean-brief > .clean-objective {
+  margin: 0 0 18px !important;
+  padding: 16px 0 18px !important;
+}
+.clean-brief > .btn-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.clean-brief .btn-row button {
+  min-height: 52px !important;
+  flex: 1 1 210px !important;
+}
+@media (max-width: 520px) {
+  .clean-brief {
+    width: calc(100vw - 24px) !important;
+    max-height: calc(100dvh - 24px) !important;
+    padding: 22px 18px !important;
+  }
+  .clean-brief > .training-kicker {
+    margin-bottom: 14px !important;
+  }
+  .clean-brief > .tutorial-title {
+    font-size: clamp(40px, 10vw, 54px) !important;
+    margin-bottom: 20px !important;
+  }
+  .clean-brief .instruction-list li {
+    grid-template-columns: 96px minmax(0, 1fr) !important;
+    min-height: 62px !important;
+    gap: 12px !important;
+    padding: 9px 10px !important;
+  }
+  .clean-brief .instruction-list li small {
+    font-size: 10px !important;
+  }
+  .clean-brief > .btn-row {
+    flex-direction: column !important;
+  }
+  .clean-brief .btn-row button {
+    flex-basis: auto !important;
+    width: 100% !important;
+  }
+}
+
+
+/* Definitive training briefing layout: one vertical stack at every viewport. */
+#tutorialModal {
+  align-items: center !important;
+  justify-content: center !important;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+           max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)) !important;
+}
+#tutorialModal > .clean-brief {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  width: min(680px, 100%) !important;
+  max-width: 680px !important;
+  max-height: calc(100dvh - 32px) !important;
+  overflow-y: auto !important;
+  margin: auto !important;
+  padding: clamp(22px, 4vw, 38px) !important;
+  text-align: left !important;
+}
+#tutorialModal .training-kicker {
+  display: block !important;
+  margin: 0 0 12px !important;
+  text-align: left !important;
+}
+#tutorialModal .tutorial-title {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 0 24px !important;
+  text-align: left !important;
+  font-size: clamp(42px, 6vw, 58px) !important;
+  line-height: .94 !important;
+  letter-spacing: -.02em !important;
+}
+#tutorialModal .instruction-list {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 9px !important;
+  width: 100% !important;
+  margin: 0 0 20px !important;
+  padding: 0 !important;
+}
+#tutorialModal .instruction-list li {
+  display: grid !important;
+  grid-template-columns: 112px minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-content: stretch !important;
+  gap: 16px !important;
+  width: 100% !important;
+  min-height: 66px !important;
+  padding: 11px 14px !important;
+}
+#tutorialModal .instruction-list li kbd {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 40px !important;
+  padding: 8px 6px !important;
+  white-space: nowrap !important;
+}
+#tutorialModal .instruction-list li span {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  line-height: 1.3 !important;
+}
+#tutorialModal .instruction-list li small {
+  display: block !important;
+  max-width: 100% !important;
+  line-height: 1.45 !important;
+  overflow-wrap: anywhere !important;
+}
+#tutorialModal .clean-objective {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: 0 0 18px !important;
+  padding: 16px 0 18px !important;
+  border-top: 1px solid var(--line) !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+#tutorialModal .clean-objective strong {
+  display: block !important;
+  max-width: 100% !important;
+  line-height: 1.45 !important;
+}
+#tutorialModal .btn-row {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 9px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#tutorialModal .btn-row button {
+  display: flex !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 52px !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+@media (max-width: 520px) {
+  #tutorialModal {
+    padding: max(12px, env(safe-area-inset-top)) 12px
+             max(12px, env(safe-area-inset-bottom)) !important;
+  }
+  #tutorialModal > .clean-brief {
+    width: 100% !important;
+    max-height: calc(100dvh - 24px) !important;
+    padding: 22px 18px !important;
+  }
+  #tutorialModal .tutorial-title {
+    margin-bottom: 20px !important;
+    font-size: clamp(38px, 9vw, 48px) !important;
+  }
+  #tutorialModal .instruction-list li {
+    grid-template-columns: 88px minmax(0, 1fr) !important;
+    gap: 12px !important;
+    min-height: 62px !important;
+    padding: 10px !important;
+  }
+  #tutorialModal .instruction-list li kbd {
+    font-size: 10px !important;
+  }
+  #tutorialModal .instruction-list li small {
+    font-size: 10px !important;
+  }
+}
+@media (max-height: 620px) and (min-width: 521px) {
+  #tutorialModal > .clean-brief {
+    padding-block: 20px !important;
+  }
+  #tutorialModal .tutorial-title {
+    margin-bottom: 14px !important;
+    font-size: 42px !important;
+  }
+  #tutorialModal .instruction-list {
+    gap: 7px !important;
+    margin-bottom: 12px !important;
+  }
+  #tutorialModal .instruction-list li {
+    min-height: 54px !important;
+    padding-block: 8px !important;
+  }
+  #tutorialModal .clean-objective {
+    margin-bottom: 12px !important;
+    padding-block: 11px 13px !important;
+  }
+}
+
+
+/* Keep Skip Training with the mission controls, not floating over the arena. */
+.hud {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+}
+.hud .skip-gameplay-btn {
+  position: static;
+  z-index: auto;
+  align-self: center;
+  justify-self: end;
+  min-height: 36px;
+  margin: 0;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .hud {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+  }
+  .hud-group.left { grid-column: 1; grid-row: 1; }
+  .timer-wrap { grid-column: 2; grid-row: 1; }
+  .hud-group.right {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .hud .skip-gameplay-btn {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: end;
+    min-height: 32px;
+    padding: 7px 10px;
+    font-size: 8px;
+  }
+}
+
+</style>
 </head>
 <body>
   <header class="topbar">
@@ -1046,18 +2118,20 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
       </div>
       <div class="hud-group right">
         <div>
-          <span class="hud-label">EMP WIPE / [E]</span>
-          <span class="hud-key emp-key">EMP</span>
+          <span class="hud-label">PULSE / [E]</span>
+          <span class="hud-key emp-key">PULSE</span>
         </div>
-        <div class="bar-track" aria-label="EMP charge"><div class="bar-fill emp" id="hudOverclockBar"></div></div>
+        <div class="bar-track" aria-label="Pulse charge"><div class="bar-fill emp" id="hudOverclockBar"></div></div>
         <span class="hud-value" id="hudOverclockText">0%</span>
       </div>
+      <button class="skip-gameplay-btn" id="skipGameplayBtn" type="button" hidden>SKIP TRAINING <span aria-hidden="true">↗</span></button>
     </section>
 
     <section class="arena" aria-label="Arcade arena">
-      <canvas id="gameCanvas" tabindex="0" aria-label="Game area. Move with WASD or arrow keys, fire with Space, use EMP with E."></canvas>
+      <canvas id="gameCanvas" tabindex="0" aria-label="Game area. Move with WASD or arrow keys, fire with Space, activate Pulse with E."></canvas>
+      <div class="countdown-overlay" id="countdownOverlay" aria-hidden="true" hidden><span id="countdownNumber">3</span></div>
       <div class="arena-footer">
-        <span class="controls-hint"><strong>WASD / ARROWS</strong> MOVE &nbsp; <strong>SPACE / CLICK</strong> FIRE &nbsp; <strong>[E]</strong> EMP</span>
+        <span class="controls-hint"><strong>WASD / ARROWS</strong> MOVE &nbsp; <strong>MOUSE 1 / SPACE</strong> FIRE &nbsp; <strong>[E]</strong> PULSE</span>
         <span class="threat-count">THREATS CLEARED: <strong id="killCount">000</strong></span>
       </div>
     </section>
@@ -1071,7 +2145,7 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
       </div>
       <div class="touch-actions">
         <button class="touch-btn fire" id="touchFire" type="button">FIRE</button>
-        <button class="touch-btn emp" id="touchEmp" type="button">EMP</button>
+        <button class="touch-btn emp" id="touchEmp" type="button">PULSE</button>
       </div>
     </section>
   </main>
@@ -1156,7 +2230,7 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
             <button type="button" class="story-dot is-active" data-story-dot="0" aria-label="Chapter 1: The Origin" aria-current="step"></button>
             <button type="button" class="story-dot" data-story-dot="1" aria-label="Chapter 2: The Spread"></button>
             <button type="button" class="story-dot" data-story-dot="2" aria-label="Chapter 3: The Answer"></button>
-            <button type="button" class="story-dot" data-story-dot="3" aria-label="Chapter 4: The Hive"></button>
+            <button type="button" class="story-dot" data-story-dot="3" aria-label="Chapter 4: The Glitch’s Hive at Arena Pixel"></button>
             <button type="button" class="story-dot" data-story-dot="4" aria-label="Chapter 5: The Call to Deployment"></button>
           </nav>
           <div class="story-nav-actions">
@@ -1170,18 +2244,21 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
 
   <section class="modal" id="tutorialModal" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" hidden>
     <div class="panel clean-brief">
-      <div class="eyebrow">FIELD CONTROLS</div>
-      <h2 class="tutorial-title" id="tutorialTitle">CLEAR THE HIVE.</h2>
+      <div class="training-kicker">WARM UP YOURSELF!</div>
+      <h2 class="tutorial-title" id="tutorialTitle">TRAINING MODE.</h2>
       <ul class="instruction-list">
         <li><kbd>W A S D</kbd><span>MOVE <small>Arrow keys also work</small></span></li>
-        <li><kbd>SPACE</kbd><span>FIRE <small>Mouse click also fires</small></span></li>
-        <li><kbd>E</kbd><span>EMP WIPE <small>Available at 100% charge</small></span></li>
+        <li><kbd>MOUSE 1</kbd><span>FIRE <small>Hold the left mouse button to aim and shoot. Spacebar also works.</small></span></li>
+        <li><kbd>E</kbd><span>PULSE <small>Clears all threats and boosts speed when fully charged.</small></span></li>
       </ul>
       <div class="clean-objective">
         <span>OBJECTIVE</span>
         <strong>SURVIVE 45 SECONDS. CLEAR ALL THREATS.</strong>
       </div>
-      <div class="btn-row"><button class="primary-btn" id="beginCombatBtn" type="button">ENTER THE HIVE</button></div>
+      <div class="btn-row">
+        <button class="primary-btn" id="beginCombatBtn" type="button">START TRAINING</button>
+        <button class="secondary-btn" id="skipTrainingBtn" type="button">SKIP TRAINING <span aria-hidden="true">↗</span></button>
+      </div>
     </div>
   </section>
 
@@ -1189,15 +2266,18 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
     <div class="panel victory-panel">
       <div class="victory-heading">
         <h2 id="victoryTitle" class="victory-title-lockup"><img src="assets/logo-festa.svg" data-dark-src="assets/logo-festa.svg" data-light-src="assets/logo-light.svg" alt="Victory Lap ’26"></h2>
-        <div class="victory-arrival">
-          <span class="event-kicker">ARRIVAL TIME · PLEASE BE ON TIME</span>
-          <strong>11:00 <small>AM</small></strong>
-          <time datetime="2026-12-03">DECEMBER 3, 2026</time>
-        </div>
       </div>
 
       <div class="victory-hero">
         <img src="assets/rocket.png" alt="Latitude robot mascot riding a rocket" id="victorySprite">
+      </div>
+
+      <div class="victory-arrival">
+        <span class="event-kicker">ARRIVAL TIME · PLEASE BE ON TIME</span>
+        <div class="victory-arrival-line">
+          <strong>11:00 <small>AM</small></strong>
+          <time datetime="2026-12-03">DECEMBER 3, 2026</time>
+        </div>
       </div>
 
       <div class="victory-body">
@@ -1205,13 +2285,13 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
           <div class="victory-location">
             <span class="event-kicker">THE GLITCH’S HIVE</span>
             <strong>ARENA PIXEL</strong>
-            <address lang="pt-BR">Rua Girassol, 925 · Vila Madalena · São Paulo, SP · 05433-002 · Brazil</address>
+            <address lang="en">Arena Pixel, R. Girassol, 925 - Vila Madalena, São Paulo - SP, 05433-002, Brazil</address>
             <a class="venue-map-link" href="https://maps.app.goo.gl/dimSa2ssFywRghsR7" target="_blank" rel="noopener noreferrer">OPEN MAP <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
           </div>
           <div class="victory-dresscode">
             <span class="event-kicker">DRESS CODE</span>
             <strong>LIGHT, SUMMER CLOTHING</strong>
-            <p>The venue gets warm. Dress light and comfortably.</p>
+            <p>ARRIVAL TIME: 11:00 AM. Dress code: light summer clothing.</p>
           </div>
         </section>
         <div class="victory-story">
@@ -1220,7 +2300,8 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
           <p>Once the mission is completed, the extraction will happen at 16:00, and we’ll all go to our Safe House, a sub-level location three blocks away. Classified until you’ve cleared the deployment.</p>
         </div>
         <div class="victory-actions">
-          <button class="primary-btn" type="button" id="downloadIcsBtn">ADD TO CALENDAR <span aria-hidden="true">↗</span></button>
+          <a class="primary-btn" id="googleCalendarBtn" href="#" target="_blank" rel="noopener noreferrer">ADD TO GOOGLE CALENDAR <span aria-hidden="true">↗</span></a>
+          <button class="secondary-btn" type="button" id="downloadIcsBtn">DOWNLOAD .ICS <span aria-hidden="true">↗</span></button>
         </div>
       </div>
     </div>
@@ -1302,6 +2383,66 @@ body.light-mode .victory-actions .primary-btn:hover { background: #354500; borde
   });
 })();
 </script>
+
+<script>
+(() => {
+  const title = "VICTORY LAP '26";
+  const location = "Arena Pixel, R. Girassol, 925 - Vila Madalena, São Paulo - SP, 05433-002, Brazil";
+  const description = "ARRIVAL TIME: 11:00 AM. Dress code: light summer clothing.";
+  const startLocal = "20261203T110000";
+  const endLocal = "20261203T160000";
+  const startUtc = "20261203T140000Z";
+  const endUtc = "20261203T190000Z";
+  const zone = "America/Sao_Paulo";
+
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: title,
+    dates: `${startLocal}/${endLocal}`,
+    ctz: zone,
+    details: description,
+    location
+  });
+  const googleLink = document.getElementById("googleCalendarBtn");
+  if (googleLink) {
+    googleLink.href = `https://calendar.google.com/calendar/render?${params.toString()}`;
+  }
+
+  const icsButton = document.getElementById("downloadIcsBtn");
+  if (icsButton) {
+    icsButton.addEventListener("click", () => {
+      const escapeIcs = value => value.replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;").replace(/\n/g, "\\n");
+      const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+      const ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Latitude.sh//Victory Lap 26//EN",
+        "CALSCALE:GREGORIAN",
+        "BEGIN:VEVENT",
+        "UID:victory-lap-2026-12-03@latitude.sh",
+        `DTSTAMP:${stamp}`,
+        `DTSTART:${startUtc}`,
+        `DTEND:${endUtc}`,
+        `SUMMARY:${escapeIcs(title)}`,
+        `LOCATION:${escapeIcs(location)}`,
+        `DESCRIPTION:${escapeIcs(description)}`,
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join("\r\n");
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "victory-lap-26.ics";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    });
+  }
+})();
+</script>
+
 <script src="game.js" defer></script>
 </body>
 </html>

@@ -12,7 +12,7 @@
     eventDate: '2026-12-03',
     eventStart: '11:00',
     eventEnd: '16:00',
-    venue: "The Glitch's Hive, Arena Pixel, Rua Girassol 925, Vila Madalena, São Paulo, SP 05433-002, Brazil",
+    venue: "Arena Pixel, R. Girassol, 925 - Vila Madalena, São Paulo - SP, 05433-002, Brazil",
     assets: {
       idle: 'assets/sprites/mascot-hover.png',
       move: 'assets/sprites/mascot-flight-c.png',
@@ -38,17 +38,33 @@
   if (!canvas || !ctx) return;
 
   const ui = {
-    hpBar: $('hudHpBar'), hpText: $('hudHpText'), timer: $('hudTimer'),
+    hpBar: $('hudHpBar'), hpText: $('hudHpText'), timer: $('hudTimer'), countdown: $('countdownOverlay'), countdownNumber: $('countdownNumber'),
     empBar: $('hudOverclockBar'), empText: $('hudOverclockText'), killCount: $('killCount'),
     intro: $('prologueModal'), tutorial: $('tutorialModal'), victory: $('victoryModal'), gameOver: $('gameOverModal'),
     start: $('startMissionBtn'), storyNext: $('storyNextBtn'),
     storySlides: [...document.querySelectorAll('[data-story-slide]')],
     storyDots: [...document.querySelectorAll('[data-story-dot]')],
-    begin: $('beginCombatBtn'), retry: $('retryBtn'),
+    begin: $('beginCombatBtn'), skipTraining: $('skipTrainingBtn'), skipGameplay: $('skipGameplayBtn'), retry: $('retryBtn'),
     gameOverStats: $('gameOverStats'),
     downloadIcs: $('downloadIcsBtn'), audioToggle: $('audioToggleBtn'), audioLabel: $('audioLabel'), audioIcon: $('audioIcon'),
     touchFire: $('touchFire'), touchEmp: $('touchEmp')
   };
+
+  const googleCalendarLink = $('googleCalendarBtn');
+  if (googleCalendarLink) {
+    const start = `${CONFIG.eventDate.replace(/-/g, '')}T${CONFIG.eventStart.replace(':', '')}00`;
+    const end = `${CONFIG.eventDate.replace(/-/g, '')}T${CONFIG.eventEnd.replace(':', '')}00`;
+    const googleUrl = new URL('https://calendar.google.com/calendar/render');
+    googleUrl.search = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: "VICTORY LAP '26",
+      dates: `${start}/${end}`,
+      ctz: 'America/Sao_Paulo',
+      details: "ARRIVAL TIME: 11:00 AM. Dress code: light summer clothing.",
+      location: CONFIG.venue
+    }).toString();
+    googleCalendarLink.href = googleUrl.toString();
+  }
 
   const images = {};
   function loadSprite(key, src) {
@@ -347,7 +363,7 @@
 
   const ENEMY_TYPES = [
     { id: 'EGRESS_TAX', label: 'EGRESS TAX', radius: 20, speed: 142, hp: 1, color: COLORS.orange, damage: 12, score: 1 },
-    { id: 'NOISY_NEIGHBOR', label: 'NOISY NEIGHBOR', radius: 28, speed: 102, hp: 2, color: '#D8E3E7', damage: 16, score: 2 },
+    { id: 'NOISY_NEIGHBOR', label: 'NOISY NEIGHBOR', radius: 28, speed: 102, hp: 2, color: COLORS.red, damage: 16, score: 2 },
     { id: 'MONOLITH', label: '2011 MONOLITH', radius: 39, speed: 69, hp: 4, color: COLORS.red, damage: 22, score: 4 }
   ];
 
@@ -513,6 +529,7 @@
     state.spawnClock = .45;
     state.screenShake = 0;
     state.empWave = null;
+    if (ui.countdown) ui.countdown.hidden = true;
     clearInput();
     updateHud();
   }
@@ -528,6 +545,17 @@
     const tenths = Math.floor((seconds * 10) % 10);
     ui.timer.textContent = `00:${String(wholeSeconds).padStart(2, '0')}.${tenths}`;
     ui.timer.classList.toggle('urgent', seconds <= 10);
+    const countdownValue = Math.ceil(seconds);
+    const showCountdown = seconds > 0 && seconds <= 3;
+    if (ui.countdown) {
+      ui.countdown.hidden = !showCountdown;
+      if (showCountdown && ui.countdownNumber && ui.countdownNumber.textContent !== String(countdownValue)) {
+        ui.countdownNumber.textContent = String(countdownValue);
+        ui.countdownNumber.style.animation = 'none';
+        void ui.countdownNumber.offsetWidth;
+        ui.countdownNumber.style.animation = '';
+      }
+    }
   }
 
   function updateSpawns(dt) {
@@ -637,7 +665,14 @@
     }
   }
 
+  function hideAllModals() {
+    [ui.intro, ui.tutorial, ui.victory, ui.gameOver].forEach((modal) => {
+      if (modal) modal.hidden = true;
+    });
+  }
+
   function showVictoryScreen() {
+    hideAllModals();
     ui.victory.hidden = false;
     ui.downloadIcs?.focus({ preventScroll: true });
   }
@@ -646,10 +681,12 @@
     if (state.mode !== 'PLAYING') return;
     state.mode = won ? 'VICTORY' : 'GAMEOVER';
     clearInput();
+    if (ui.skipGameplay) ui.skipGameplay.hidden = true;
     if (won) {
       audio.victory();
       showVictoryScreen();
     } else {
+      hideAllModals();
       ui.gameOverStats.textContent = `THREATS CLEARED: ${String(state.kills).padStart(3, '0')}`;
       ui.gameOver.hidden = false;
       ui.retry?.focus({ preventScroll: true });
@@ -724,19 +761,25 @@
 
   function startCombat() {
     audio.init();
-    ui.intro.hidden = true;
-    ui.tutorial.hidden = true;
-    ui.victory.hidden = true;
-    ui.gameOver.hidden = true;
+    hideAllModals();
     resetGame();
     state.mode = 'PLAYING';
     state.lastFrame = 0;
+    if (ui.skipGameplay) ui.skipGameplay.hidden = false;
     canvas.focus?.();
+  }
+
+  function skipTraining() {
+    clearInput();
+    if (ui.skipGameplay) ui.skipGameplay.hidden = true;
+    hideAllModals();
+    state.mode = 'VICTORY';
+    showVictoryScreen();
   }
 
   function showTutorial() {
     audio.init();
-    ui.intro.hidden = true;
+    hideAllModals();
     ui.tutorial.hidden = false;
     ui.begin?.focus({ preventScroll: true });
   }
@@ -858,6 +901,8 @@
     dot.addEventListener('click', () => showStoryChapter(Number(dot.dataset.storyDot), true));
   });
   ui.begin?.addEventListener('click', startCombat);
+  ui.skipTraining?.addEventListener('click', skipTraining);
+  ui.skipGameplay?.addEventListener('click', skipTraining);
   ui.retry.addEventListener('click', startCombat);
 
   ui.audioToggle.addEventListener('click', () => {
@@ -874,14 +919,14 @@
   function downloadCalendar() {
     const now = new Date();
     const stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-    const description = `VICTORY LAP '26. ARRIVAL TIME: 11:00 AM SHARP. December 3rd at The Glitch's Hive (Arena Pixel). Dress code: light summer clothing; the venue gets warm. Each person is assigned to a unit. Squads of six run every chamber; the three fastest squads make the Leaderboard and win prizes. After the mission, the team heads to the Safe House, a sub-level location three blocks away.`;
+    const description = `ARRIVAL TIME: 11:00 AM. Dress code: light summer clothing.`;
     const lines = [
       'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Latitude.sh//Arcade Invitation//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
       'BEGIN:VTIMEZONE', 'TZID:America/Sao_Paulo', 'BEGIN:STANDARD', 'DTSTART:20190217T000000', 'TZOFFSETFROM:-0200', 'TZOFFSETTO:-0300', 'TZNAME:BRT', 'END:STANDARD', 'END:VTIMEZONE',
       'BEGIN:VEVENT', `UID:latitude-arcade-${CONFIG.eventDate}@latitude.sh`, `DTSTAMP:${stamp}`,
       `DTSTART;TZID=America/Sao_Paulo:${CONFIG.eventDate.replace(/-/g, '')}T${CONFIG.eventStart.replace(':', '')}00`,
       `DTEND;TZID=America/Sao_Paulo:${CONFIG.eventDate.replace(/-/g, '')}T${CONFIG.eventEnd.replace(':', '')}00`,
-      `SUMMARY:${icsEscape("VICTORY LAP '26 // THE HIVE DEPLOYMENT")}`,
+      `SUMMARY:${icsEscape("VICTORY LAP '26")}`,
       `DESCRIPTION:${icsEscape(description)}`,
       `LOCATION:${icsEscape(CONFIG.venue)}`,
       'URL:https://maps.app.goo.gl/dimSa2ssFywRghsR7',
